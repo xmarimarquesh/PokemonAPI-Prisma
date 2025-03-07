@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@types/express": "^5.0.0",
+    "axios": "^1.8.2",
     "config": "^3.3.12",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
