@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `poke` MODIFY `id` INTEGER NOT NULL;

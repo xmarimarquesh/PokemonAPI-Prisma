@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Pokemon {
-  id         Int     @id @default(autoincrement())
+  id         Int     @id
   name       String
   species    String
   height     Int
@@ -17,4 +17,5 @@ model Pokemon {
   rarity     Int
   captured   Boolean
   escapeCount Int    @default(0)
+  @@map("poke")
 }

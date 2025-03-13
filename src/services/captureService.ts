@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma.ts';
 import { calculateCaptureChance } from '../utils/captureUtils.ts';
 
-const prisma = new PrismaClient();
 
 interface Pokemon {
   id: number;
@@ -20,57 +19,73 @@ interface Pokemon {
 }
 
 class CaptureService {
+
   async capturePokemon(pokemonId: number): Promise<any | null> {
-    const jaFoi = await prisma.pokemon.findUnique({
+    
+    let jaFoi = await prisma.pokemon.findUnique({
       where: { id: pokemonId },
     });
 
     if (jaFoi && jaFoi.captured) {
-      throw new Error('Esse pokemon já foi capturado!');
+      return false;
+    }
+
+    if (!jaFoi) {
+      const response = await axios.get<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+      const pokemonData = response.data;
+
+      jaFoi = await prisma.pokemon.create({
+        data: {
+          id: pokemonData.id,
+          name: pokemonData.name,
+          species: pokemonData.species.name,
+          height: pokemonData.height,
+          weight: pokemonData.weight,
+          type: pokemonData.types[0].type.name,
+          rarity: 0,
+          captured: false,
+          escapeCount: 0
+        }
+      });
     }
 
     const response = await axios.get<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
     const pokemonData = response.data;
 
     const chance = calculateCaptureChance(pokemonData);
-
     const aleatorio = Math.floor(Math.random() * 100) + 1;
 
     if (chance >= aleatorio) {
-      const newPokemon = await prisma.pokemon.create({
+      const newPokemon = await prisma.pokemon.update({
+        where: { id: pokemonId },
         data: {
-          name: pokemonData.name,
-          species: pokemonData.species.name,
-          height: pokemonData.height,
-          weight: pokemonData.weight,
-          type: pokemonData.types[0].type.name,
-          rarity: chance,
-          captured: true
+          captured: true,
+          rarity: chance, 
         }
-      });      
+      });
       return newPokemon;
     } else {
       const updatedPokemon = await prisma.pokemon.update({
         where: { id: pokemonId },
         data: {
           escapeCount: {
-            increment: 1,
+            increment: 1, 
           },
         },
       });
 
+      console.log("FUGIU");
+
       if (updatedPokemon.escapeCount >= 3) {
         await prisma.pokemon.update({
           where: { id: pokemonId },
-          data: { captured: false },
+          data: { captured: false }, 
         });
-
-        throw new Error('O Pokémon fugiu!');
+        return false;
       }
 
       return null;
     }
   }
 }
-
 export default new CaptureService();

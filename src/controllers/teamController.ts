@@ -1,4 +1,4 @@
-const prisma = require('../prisma/prismaClient');
+import { prisma } from '../lib/prisma.ts';
 import { Request, Response } from "express";
 
 class TeamController {
