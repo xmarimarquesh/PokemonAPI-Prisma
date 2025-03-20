@@ -29,11 +29,11 @@ class CaptureService {
     if (jaFoi && jaFoi.captured) {
       return false;
     }
-
+    console.log("AQUIFOI")
     if (!jaFoi) {
       const response = await axios.get<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
       const pokemonData = response.data;
-
+      
       jaFoi = await prisma.pokemon.create({
         data: {
           id: pokemonData.id,
@@ -48,7 +48,7 @@ class CaptureService {
         }
       });
     }
-
+    console.log("AQUIFOI2")
     const response = await axios.get<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
     const pokemonData = response.data;
 

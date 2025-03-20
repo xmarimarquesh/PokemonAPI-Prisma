@@ -3,7 +3,6 @@ import pokemonRoute from './routes/pokemonRoute.ts';
 import teamRoute from './routes/teamRoute.ts';
 import cors from 'cors'
 
-
 const app = express();
 app.use(
   cors({
