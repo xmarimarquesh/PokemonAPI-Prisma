@@ -1,2 +1,11 @@
-# Back-end__To_Do_List
-Back-end do projeto de uma To Do List
+
+CRIAR O DATABASE: pokemon
+
+use database
+
+npm i
+
+npm i cors
+
+npx prisma migrate dev
+npx prisma generate
